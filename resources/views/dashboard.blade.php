@@ -16,8 +16,8 @@
             <h2 class="mb-2 text-2xl font-semibold">Welcome to RepairHub</h2>
             <p class="mb-5 text-sm leading-6 md:text-base">A system for reporting and tracking campus facility issues.</p>
             <div class="flex gap-2.5">
-                <button class="rounded-md bg-yellow-300 px-4 py-2 text-sm font-semibold text-gray-900">Report an Issue</button>
-                <a href="#" class="rounded-md border border-white bg-white px-4 py-2 text-sm font-medium text-red-800">View Reports</a>
+              <a href="/report-issue" class="rounded-md bg-yellow-300 px-4 py-2 text-sm font-semibold text-gray-900">Report an Issue</a>      
+              <a href="/admin-dashboard" class="rounded-md border border-white bg-white px-4 py-2 text-sm font-medium text-red-800">View Reports</a>      
             </div>
         </div>
         <div class="mx-5 mb-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4 md:mx-9">
@@ -78,7 +78,7 @@
         </div>
         <div class="mx-5 mt-6 mb-9 grid gap-3 sm:grid-cols-2 md:mx-9">
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
-                <a href="/admin-dashboard" class="flex items-center gap-3 font-medium text-red-800">
+                <a href="/report-issue" class="flex items-center gap-3 font-medium text-red-800">
                     <span class="h-6 w-6 rounded-full bg-gray-200"></span>
                     <span>
                         <h4 class="text-sm font-semibold">Report an Issue</h4>
@@ -87,7 +87,7 @@
                 </a>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
-                <a href="#" class="flex items-center gap-3 font-medium text-red-800">
+                <a href="/admin-dashboard" class="flex items-center gap-3 font-medium text-red-800">
                     <span class="h-6 w-6 rounded-full bg-gray-200"></span>
                     <span>
                         <h4 class="text-sm font-semibold">Admin Panel</h4>
