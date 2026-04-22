@@ -15,3 +15,13 @@ Route::get('/register', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 });
+
+// Report Issue page
+Route::get('/report-issue', function () {
+    return view('report_issue');
+});
+
+// Admin dashboard page
+Route::get('/admin-dashboard', function () {
+    return view('admin_dashboard');
+});
