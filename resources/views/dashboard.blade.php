@@ -78,7 +78,7 @@
         </div>
         <div class="mx-5 mt-6 mb-9 grid gap-3 sm:grid-cols-2 md:mx-9">
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
-                <a href="#" class="flex items-center gap-3 font-medium text-red-800">
+                <a href="/admin-dashboard" class="flex items-center gap-3 font-medium text-red-800">
                     <span class="h-6 w-6 rounded-full bg-gray-200"></span>
                     <span>
                         <h4 class="text-sm font-semibold">Report an Issue</h4>

@@ -13,8 +13,11 @@
         <div class="mb-5 text-sm font-medium tracking-wide text-gray-500">VISAYAN CAMPUS</div>
         <h2 class="mb-2 text-2xl font-semibold text-gray-900">Create an account</h2>
         <p class="mb-5 text-sm text-gray-600">Enter your email to sign up</p>
-        <input type="email" class="mb-5 w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100" placeholder="email@umindanao.edu.ph">
-        <button class="w-full rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-800">Continue</button>
+        <form action="/register/continue" method="POST">
+            @csrf
+            <input type="email" name="email" required class="mb-5 w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100" placeholder="email@umindanao.edu.ph">
+            <button type="submit" class="w-full rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-800">Continue</button>
+        </form>
         <div class="my-5 text-sm text-gray-500">or</div>
         <button class="mb-3 w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">Continue with Google</button>
         <button class="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">Continue with Apple</button>

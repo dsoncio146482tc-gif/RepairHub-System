@@ -3,12 +3,17 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.register');
 });
 
 // Add a route for the registration page
 Route::get('/register', function () {
     return view('auth.register');
+});
+
+// Continue registration then go to homepage
+Route::post('/register/continue', function () {
+    return redirect('/dashboard');
 });
 
 // Dashboard route after sign in
