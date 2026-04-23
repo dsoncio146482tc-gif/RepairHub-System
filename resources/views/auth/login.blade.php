@@ -6,8 +6,8 @@
     <title>Repair Hub - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex min-h-screen items-center justify-center bg-gray-50 px-4 font-sans">
-    <div class="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-md">
+<body class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8 font-sans sm:py-12">
+    <div class="w-full max-w-md rounded-xl bg-white p-5 text-center shadow-md sm:p-6">
         <img src="{{ asset('images/um logo.jpg') }}" alt="Logo" class="mx-auto mb-5 w-28">
         <div class="mb-2 text-3xl font-bold text-gray-900">Repair Hub</div>
         <div class="mb-5 text-sm font-medium tracking-wide text-gray-500">VISAYAN CAMPUS</div>

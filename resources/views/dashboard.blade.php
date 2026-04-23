@@ -5,31 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - RepairHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root { --nav-drawer-width: min(18rem, 88vw); }
-        #side-nav { width: var(--nav-drawer-width); }
-        #dashboard-main-shell {
-            transition: margin 0.2s ease-out, width 0.2s ease-out, max-width 0.2s ease-out, border-radius 0.2s ease-out;
-        }
-        #dashboard-main-shell.dashboard-layout-nav-open {
-            margin-left: var(--nav-drawer-width);
-            margin-right: 0;
-            max-width: none;
-            width: calc(100vw - var(--nav-drawer-width));
-            width: calc(100dvw - var(--nav-drawer-width));
-            border-radius: 0;
-        }
-    </style>
 </head>
 <body class="m-0 min-h-dvh bg-gray-100 font-sans text-gray-800">
     <div id="nav-overlay" class="fixed inset-0 z-40 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-200 md:bg-black/30" aria-hidden="true" onclick="closeSideNav()"></div>
 
-    <aside id="side-nav" class="fixed top-0 left-0 z-50 flex h-full -translate-x-full flex-col border-r border-red-950/40 bg-[#6b0f1a] shadow-xl transition-transform duration-200 ease-out" aria-label="Main menu">
+    <aside id="side-nav" class="fixed top-0 left-0 z-50 flex h-full w-[min(18rem,88vw)] -translate-x-full flex-col border-r border-red-950/40 bg-[#6b0f1a] shadow-xl transition-transform duration-200 ease-out" aria-label="Main menu">
         <div class="flex shrink-0 items-start justify-between border-b border-white/15 px-5 py-4 md:px-6">
-            <div>
+            <a href="{{ route('dashboard') }}" onclick="closeSideNav()">
                 <span class="block text-xl font-bold leading-none text-white sm:text-2xl">RepairHub</span>
                 <span class="mt-1 block text-xs text-white/75">Facility Issue Reporting System</span>
-            </div>
+            </a>
             <button type="button" onclick="closeSideNav()" class="flex size-8 shrink-0 items-center justify-center rounded-md text-xl leading-none text-white/80 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40" aria-label="Close menu">
                 &times;
             </button>
@@ -37,13 +22,13 @@
         <nav class="flex flex-1 flex-col gap-0.5 p-3">
             <a href="{{ route('dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-amber-200 hover:bg-white/10" onclick="closeSideNav()">Home</a>
             <a href="{{ route('report_issue') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Report Issue</a>
-            <a href="{{ route('my_report') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">My Report</a>
+            <a href="{{ route('my_report') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Reports</a>
             <a href="{{ route('admin.dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Admin Dashboard</a>
             <a href="{{ route('login') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Log in</a>
         </nav>
     </aside>
 
-    <div id="dashboard-main-shell" class="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col overflow-hidden bg-white shadow-none md:rounded-2xl md:shadow-xl">
+    <div id="dashboard-main-shell" class="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col overflow-hidden bg-white shadow-none transition-[margin,width,max-width,border-radius] duration-200 ease-out md:rounded-2xl md:shadow-xl">
         <header class="shrink-0 border-b border-gray-200 bg-white px-5 py-4 md:px-9">
             <div class="flex items-start gap-2.5">
                 <button type="button" id="nav-menu-btn" onclick="openSideNav()" class="mt-1 flex size-8 shrink-0 items-center justify-center rounded-md text-lg leading-none text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-200" aria-expanded="false" aria-controls="side-nav" aria-label="Open menu">
@@ -55,16 +40,16 @@
                 </div>
             </div>
         </header>
-        <div class="px-5 pt-2 md:px-9">
-        <div class="mb-7 rounded-xl bg-red-800 p-6 text-white">
+        <div class="space-y-8 px-4 pt-4 pb-10 sm:px-5 md:px-9 md:pt-6">
+        <div class="rounded-xl bg-red-800 p-5 text-white sm:p-6">
             <h2 class="mb-2 text-2xl font-semibold">Welcome to RepairHub</h2>
             <p class="mb-5 text-sm leading-6 md:text-base">A system for reporting and tracking campus facility issues.</p>
-            <div class="flex gap-2.5">
+            <div class="flex flex-col gap-2.5 sm:flex-row">
               <a href="{{ route('report_issue') }}" class="rounded-md bg-yellow-300 px-4 py-2 text-sm font-semibold text-gray-900">Report an Issue</a>
               <a href="{{ route('admin.dashboard') }}" class="rounded-md border border-white bg-white px-4 py-2 text-sm font-medium text-red-800">View Reports</a>
             </div>
         </div>
-        <div class="mb-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div class="text-3xl leading-none font-bold">3</div>
                 <div class="mt-2 text-sm text-gray-500">Total Reports</div>
@@ -85,7 +70,7 @@
         <div>
             <div class="mb-3 flex items-center justify-between">
                 <h3 class="text-2xl font-bold">Issues</h3>
-                <a href="#" class="text-sm font-medium text-red-800">View all</a>
+                <button id="view-all-issues-btn" type="button" class="text-sm font-medium text-red-800">View all</button>
             </div>
             <div class="overflow-x-auto rounded-xl border border-gray-200">
                 <table class="min-w-full border-collapse">
@@ -98,22 +83,22 @@
                             <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap">Date</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <tbody id="issues-table-body">
+                        <tr class="border-b border-gray-200 hover:bg-gray-50" data-date="2026-04-10">
                             <td class="px-4 py-3 text-base font-semibold whitespace-nowrap">Chair</td>
                             <td class="px-4 py-3 text-[15px] text-gray-600">Room 301, Engineering Building</td>
                             <td class="px-4 py-3 text-[15px] text-gray-600 whitespace-nowrap">High</td>
                             <td class="px-4 py-3 text-base font-bold text-green-600 whitespace-nowrap">Resolved</td>
                             <td class="px-4 py-3 text-[15px] text-gray-500 whitespace-nowrap">April 10, 2026</td>
                         </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <tr class="border-b border-gray-200 hover:bg-gray-50" data-date="2026-02-03">
                             <td class="px-4 py-3 text-base font-semibold whitespace-nowrap">Light</td>
                             <td class="px-4 py-3 text-[15px] text-gray-600">Hallway 2F, IT Building</td>
                             <td class="px-4 py-3 text-[15px] text-gray-600 whitespace-nowrap">Medium</td>
                             <td class="px-4 py-3 text-base font-bold text-blue-600 whitespace-nowrap">Ongoing</td>
                             <td class="px-4 py-3 text-[15px] text-gray-500 whitespace-nowrap">February 3, 2026</td>
                         </tr>
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-50" data-date="2026-03-02">
                             <td class="px-4 py-3 text-base font-semibold whitespace-nowrap">Window</td>
                             <td class="px-4 py-3 text-[15px] text-gray-600">DPT 213, New Building</td>
                             <td class="px-4 py-3 text-[15px] text-gray-600 whitespace-nowrap">Medium</td>
@@ -124,7 +109,7 @@
                 </table>
             </div>
         </div>
-        <div class="mt-6 mb-9 grid w-full gap-3 sm:grid-cols-2">
+        <div class="grid w-full gap-3 sm:grid-cols-2">
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
                 <a href="{{ route('report_issue') }}" class="flex w-full items-center gap-3 font-medium text-red-800">
                     <span class="min-w-0 flex-1">
@@ -152,9 +137,19 @@
     </div>
 
     <script>
+        function applyDrawerLayout(isOpen) {
+            var shell = document.getElementById('dashboard-main-shell');
+            var desktop = window.matchMedia('(min-width: 768px)').matches;
+            if (desktop && isOpen) {
+                shell.classList.add('ml-[min(18rem,88vw)]', 'mr-0', 'max-w-none', 'w-[calc(100vw-min(18rem,88vw))]', 'w-[calc(100dvw-min(18rem,88vw))]', 'rounded-none');
+            } else {
+                shell.classList.remove('ml-[min(18rem,88vw)]', 'mr-0', 'max-w-none', 'w-[calc(100vw-min(18rem,88vw))]', 'w-[calc(100dvw-min(18rem,88vw))]', 'rounded-none');
+            }
+        }
+
         function openSideNav() {
             document.getElementById('side-nav').classList.remove('-translate-x-full');
-            document.getElementById('dashboard-main-shell').classList.add('dashboard-layout-nav-open');
+            applyDrawerLayout(true);
             var overlay = document.getElementById('nav-overlay');
             overlay.classList.remove('opacity-0', 'pointer-events-none');
             overlay.classList.add('opacity-100');
@@ -164,7 +159,7 @@
         }
         function closeSideNav() {
             document.getElementById('side-nav').classList.add('-translate-x-full');
-            document.getElementById('dashboard-main-shell').classList.remove('dashboard-layout-nav-open');
+            applyDrawerLayout(false);
             var overlay = document.getElementById('nav-overlay');
             overlay.classList.add('opacity-0', 'pointer-events-none');
             overlay.classList.remove('opacity-100');
@@ -174,6 +169,42 @@
         }
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeSideNav();
+        });
+        window.addEventListener('resize', function () {
+            var navOpen = !document.getElementById('side-nav').classList.contains('-translate-x-full');
+            applyDrawerLayout(navOpen);
+        });
+
+        var issuesTableBody = document.getElementById('issues-table-body');
+        var viewAllIssuesBtn = document.getElementById('view-all-issues-btn');
+        var issuesRows = Array.prototype.slice.call(issuesTableBody.querySelectorAll('tr[data-date]'));
+        var defaultVisibleRows = 10;
+
+        issuesRows.sort(function (a, b) {
+            var dateA = Date.parse(a.getAttribute('data-date'));
+            var dateB = Date.parse(b.getAttribute('data-date'));
+            return dateB - dateA;
+        });
+
+        function renderIssues(showAll) {
+            issuesTableBody.innerHTML = '';
+            var rowsToRender = showAll ? issuesRows : issuesRows.slice(0, defaultVisibleRows);
+
+            rowsToRender.forEach(function (row, index) {
+                var isLast = index === rowsToRender.length - 1;
+                row.classList.remove('border-b', 'border-gray-200');
+                if (!isLast) {
+                    row.classList.add('border-b', 'border-gray-200');
+                }
+                issuesTableBody.appendChild(row);
+            });
+        }
+
+        renderIssues(false);
+
+        viewAllIssuesBtn.addEventListener('click', function () {
+            renderIssues(true);
+            viewAllIssuesBtn.style.display = 'none';
         });
     </script>
 </body>
