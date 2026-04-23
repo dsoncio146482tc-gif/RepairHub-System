@@ -28,11 +28,10 @@
             <div class="text-left mb-5">
                 <label class="text-xs font-semibold text-gray-600 uppercase">Password</label>
                 <input type="password" name="password" required 
-                    class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100" 
-                    placeholder="Min. 6 characters">
+                    class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100">
             </div>
 
-            <button type="submit" class="w-full rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-800">
+            <button type="submit" class="mt-4 w-full rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-800">
                 Continue
             </button>
         </form>

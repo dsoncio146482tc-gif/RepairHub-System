@@ -31,6 +31,10 @@ Route::get('/admin-dashboard', function () {
     return view('admin_dashboard');
 })->name('admin.dashboard');
 
+Route::get('/my-report', function () {
+    return view('my_report');
+})->name('my_report');
+
 // --- OTHER PAGES ---
 Route::get('/report-issue', function () {
     return view('report_issue');

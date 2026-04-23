@@ -9,7 +9,7 @@
 <body class="min-h-screen bg-slate-50 px-4 py-10 font-sans text-slate-900">
     <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white p-8 shadow-lg">
         <h1 class="text-3xl font-bold">RepairHub System</h1>
-        <p class="mt-2 text-slate-600">Facility Issue Reporting System by Team Diva</p>
+        <p class="mt-2 text-slate-600">Facility Issue Reporting System</p>
 
         <div class="mt-8 grid gap-3 sm:grid-cols-2">
             <a href="{{ url('/dashboard') }}" class="rounded-lg bg-red-700 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-red-800">Home Dashboard</a>
