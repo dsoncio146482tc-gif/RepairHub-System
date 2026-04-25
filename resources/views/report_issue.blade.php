@@ -8,9 +8,23 @@
 </head>
 <body class="m-0 bg-gray-50 font-sans">
     <div class="mx-auto my-8 w-full max-w-xl rounded-xl bg-white p-6 shadow-md">
+        <div id="success-screen" class="hidden flex-col items-center justify-center py-8">
+    <div class="mb-6 w-full rounded-xl bg-green-50 p-8 text-center">
+        <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border-4 border-green-500">
+            <svg class="h-10 w-10 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <h2 class="mb-2 text-2xl font-bold text-green-700">Issue reported successfully!</h2>
+        <p class="text-gray-500">Thank you for helping us improve.<br>Our team will review it shortly.</p>
+    </div>
+    <button onclick="window.location.href='/dashboard'"
+        class="w-full rounded-xl bg-green-600 py-3 text-base font-semibold text-white hover:bg-green-700">
+        Done
+    </button>
+</div>
         <h1 class="mb-5 text-center text-3xl font-bold text-gray-900">Report Issue</h1>
-        <form action="/submit-issue" method="POST" enctype="multipart/form-data">
-            @csrf
+            <form id="report-form" action="/submit-issue" method="POST" enctype="multipart/form-data">            @csrf
 
             <label for="location" class="mb-2 block text-sm font-semibold text-gray-800">Location *</label>
             <input type="text" id="location" name="location" placeholder="e.g., Room 301, Engineering Bldg." required class="mb-4 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
@@ -68,6 +82,29 @@
     </div>
 
     <script>
+
+    document.getElementById('report-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+   fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector('h1').classList.add('hidden');
+            form.classList.add('hidden');
+            const s = document.getElementById('success-screen');
+            s.classList.remove('hidden');
+            s.classList.add('flex');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(err => alert('Something went wrong: ' + err));
+});
         function handlePhoto(input) {
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];

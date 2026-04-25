@@ -22,20 +22,16 @@
         </div>
         <div class="mx-5 mb-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4 md:mx-9">
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                <div class="text-3xl leading-none font-bold">3</div>
-                <div class="mt-2 text-sm text-gray-500">Total Reports</div>
+<div class="text-3xl leading-none font-bold">{{ $issues->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Total Reports</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                <div class="text-3xl leading-none font-bold text-red-800">1</div>
-                <div class="mt-2 text-sm text-gray-500">Pending</div>
+<div class="text-3xl leading-none font-bold text-red-800">{{ $issues->where('status','Pending')->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Pending</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                <div class="text-3xl leading-none font-bold text-amber-500">1</div>
-                <div class="mt-2 text-sm text-gray-500">Ongoing</div>
+<div class="text-3xl leading-none font-bold text-amber-500">{{ $issues->where('status','Ongoing')->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Ongoing</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                <div class="text-3xl leading-none font-bold text-green-600">1</div>
-                <div class="mt-2 text-sm text-gray-500">Resolved</div>
+<div class="text-3xl leading-none font-bold text-green-600">{{ $issues->where('status','Resolved')->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Resolved</div>
             </div>
         </div>
         <div class="mx-5 md:mx-9">
@@ -53,26 +49,23 @@
                             <th class="w-[18%] px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap">Date</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">Chair</td>
-                            <td class="py-3 text-[15px] text-gray-600">Room 301, Engineering Building</td>
-                            <td class="py-3 text-base font-bold text-green-600 whitespace-nowrap">Resolved</td>
-                            <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap">April 10, 2026</td>
-                        </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">Light</td>
-                            <td class="py-3 text-[15px] text-gray-600">Hallway 2F, IT Building</td>
-                            <td class="py-3 text-base font-bold text-amber-500 whitespace-nowrap">Ongoing</td>
-                            <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap">February 3, 2026</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50">
-                            <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">Window</td>
-                            <td class="py-3 text-[15px] text-gray-600">DPT 213, New Building</td>
-                            <td class="py-3 text-base font-bold text-red-800 whitespace-nowrap">Pending</td>
-                            <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap">March 2, 2026</td>
-                        </tr>
-                    </tbody>
+                   <tbody>
+    @forelse($issues as $issue)
+    <tr class="border-b border-gray-200 hover:bg-gray-50">
+        <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">{{ $issue->location }}</td>
+        <td class="py-3 text-[15px] text-gray-600">{{ $issue->description }}</td>
+        <td class="py-3 text-base font-bold whitespace-nowrap
+            {{ $issue->status === 'Resolved' ? 'text-green-600' : '' }}
+            {{ $issue->status === 'Ongoing' ? 'text-amber-500' : '' }}
+            {{ $issue->status === 'Pending' ? 'text-red-800' : '' }}">
+            {{ $issue->status }}
+        </td>
+        <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap">{{ $issue->created_at->format('F j, Y') }}</td>
+    </tr>
+    @empty
+    <tr><td colspan="4" class="py-6 text-center text-gray-400">No issues reported yet.</td></tr>
+    @endforelse
+</tbody>
                 </table>
             </div>
         </div>
