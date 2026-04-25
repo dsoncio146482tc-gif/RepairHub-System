@@ -34,7 +34,7 @@ class AuthController extends Controller
         return $this->redirectBasedOnRole($user);
     }
 
-    // KANI ANG KULANG NIMO: Para sa Login
+    //  Para sa Login
     public function login(Request $request)
     {
         // 1. I-validate ang login input
