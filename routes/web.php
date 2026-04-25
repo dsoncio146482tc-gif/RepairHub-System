@@ -39,3 +39,16 @@ Route::get('/my-report', function () {
 Route::get('/report-issue', function () {
     return view('report_issue');
 })->name('report_issue');
+
+// -- para ni sa submit gois --
+Route::post('/submit-issue', [App\Http\Controllers\IssueController::class, 'store']);
+
+Route::get('/dashboard', function () {
+    $issues = \App\Models\Issue::latest()->get();
+    return view('dashboard', compact('issues'));
+})->name('dashboard');
+
+Route::get('/admin-dashboard', function () {
+    $issues = \App\Models\Issue::latest()->get();
+    return view('admin_dashboard', compact('issues'));
+})->name('admin.dashboard');

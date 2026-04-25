@@ -6,38 +6,25 @@
     <title>Report Issue</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="m-0 min-h-dvh bg-gray-50 font-sans text-gray-900">
-    <div id="nav-overlay" class="fixed inset-0 z-40 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-200 md:bg-black/30" aria-hidden="true" onclick="closeSideNav()"></div>
-
-    <aside id="side-nav" class="fixed top-0 left-0 z-50 flex h-full w-[min(18rem,88vw)] -translate-x-full flex-col border-r border-red-950/40 bg-[#6b0f1a] shadow-xl transition-transform duration-200 ease-out" aria-label="Main menu">
-        <div class="flex shrink-0 items-start justify-between border-b border-white/15 px-5 py-4 md:px-6">
-            <a href="{{ route('dashboard') }}" onclick="closeSideNav()">
-                <span class="block text-xl font-bold leading-none text-white sm:text-2xl">RepairHub</span>
-                <span class="mt-1 block text-xs text-white/75">Facility Issue Reporting System</span>
-            </a>
-            <button type="button" onclick="closeSideNav()" class="flex size-8 shrink-0 items-center justify-center rounded-md text-xl leading-none text-white/80 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40" aria-label="Close menu">
-                &times;
-            </button>
+<body class="m-0 bg-gray-50 font-sans">
+    <div class="mx-auto my-8 w-full max-w-xl rounded-xl bg-white p-6 shadow-md">
+        <div id="success-screen" class="hidden flex-col items-center justify-center py-8">
+    <div class="mb-6 w-full rounded-xl bg-green-50 p-8 text-center">
+        <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border-4 border-green-500">
+            <svg class="h-10 w-10 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
         </div>
-        <nav class="flex flex-1 flex-col gap-0.5 p-3">
-            <a href="{{ route('dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Home</a>
-            <a href="{{ route('report_issue') }}" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-amber-200 hover:bg-white/10" onclick="closeSideNav()">Report Issue</a>
-            <a href="{{ route('my_report') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Reports</a>
-            <a href="{{ route('admin.dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Admin Dashboard</a>
-            <a href="{{ route('login') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Log in</a>
-        </nav>
-    </aside>
-
-    <div id="report-main-shell" class="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col overflow-hidden bg-white shadow-none transition-[margin,width,max-width,border-radius] duration-200 ease-out md:rounded-2xl md:shadow-xl">
-        <header class="flex h-16 shrink-0 items-center gap-2.5 border-b border-white/15 bg-red-800 px-4 md:px-5">
-            <button type="button" id="nav-menu-btn" onclick="openSideNav()" class="flex size-8 shrink-0 items-center justify-center rounded-md text-lg leading-none text-white/90 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40" aria-expanded="false" aria-controls="side-nav" aria-label="Open menu">
-                &#9776;
-            </button>
-            <h1 class="text-2xl font-bold leading-none tracking-tight text-white">Report Issue</h1>
-        </header>
-        <div class="p-4 pt-5 sm:p-6">
-        <form action="/submit-issue" method="POST" enctype="multipart/form-data">
-            @csrf
+        <h2 class="mb-2 text-2xl font-bold text-green-700">Issue reported successfully!</h2>
+        <p class="text-gray-500">Thank you for helping us improve.<br>Our team will review it shortly.</p>
+    </div>
+    <button onclick="window.location.href='/dashboard'"
+        class="w-full rounded-xl bg-green-600 py-3 text-base font-semibold text-white hover:bg-green-700">
+        Done
+    </button>
+</div>
+        <h1 class="mb-5 text-center text-3xl font-bold text-gray-900">Report Issue</h1>
+            <form id="report-form" action="/submit-issue" method="POST" enctype="multipart/form-data">            @csrf
 
             <label for="location" class="mb-2 block text-sm font-semibold text-gray-800">Location *</label>
             <input type="text" id="location" name="location" placeholder="e.g., Room 301, Engineering Bldg." required class="mb-4 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
@@ -95,44 +82,29 @@
     </div>
 
     <script>
-        function applyDrawerLayout(isOpen) {
-            var shell = document.getElementById('report-main-shell');
-            var desktop = window.matchMedia('(min-width: 768px)').matches;
-            if (desktop && isOpen) {
-                shell.classList.add('ml-[min(18rem,88vw)]', 'mr-0', 'max-w-none', 'w-[calc(100vw-min(18rem,88vw))]', 'w-[calc(100dvw-min(18rem,88vw))]', 'rounded-none');
-            } else {
-                shell.classList.remove('ml-[min(18rem,88vw)]', 'mr-0', 'max-w-none', 'w-[calc(100vw-min(18rem,88vw))]', 'w-[calc(100dvw-min(18rem,88vw))]', 'rounded-none');
-            }
-        }
 
-        function openSideNav() {
-            document.getElementById('side-nav').classList.remove('-translate-x-full');
-            applyDrawerLayout(true);
-            var overlay = document.getElementById('nav-overlay');
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            overlay.classList.add('opacity-100');
-            overlay.setAttribute('aria-hidden', 'false');
-            document.getElementById('nav-menu-btn').setAttribute('aria-expanded', 'true');
-            document.body.classList.add('overflow-hidden');
+    document.getElementById('report-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+   fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector('h1').classList.add('hidden');
+            form.classList.add('hidden');
+            const s = document.getElementById('success-screen');
+            s.classList.remove('hidden');
+            s.classList.add('flex');
+        } else {
+            alert('Error: ' + data.error);
         }
-        function closeSideNav() {
-            document.getElementById('side-nav').classList.add('-translate-x-full');
-            applyDrawerLayout(false);
-            var overlay = document.getElementById('nav-overlay');
-            overlay.classList.add('opacity-0', 'pointer-events-none');
-            overlay.classList.remove('opacity-100');
-            overlay.setAttribute('aria-hidden', 'true');
-            document.getElementById('nav-menu-btn').setAttribute('aria-expanded', 'false');
-            document.body.classList.remove('overflow-hidden');
-        }
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeSideNav();
-        });
-        window.addEventListener('resize', function () {
-            var navOpen = !document.getElementById('side-nav').classList.contains('-translate-x-full');
-            applyDrawerLayout(navOpen);
-        });
-
+    })
+    .catch(err => alert('Something went wrong: ' + err));
+});
         function handlePhoto(input) {
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];

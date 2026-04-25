@@ -39,20 +39,16 @@
         <main class="flex flex-1 flex-col px-4 py-6 md:px-7 md:py-8">
             <section class="mx-auto mb-5 flex flex-wrap justify-center gap-2.5">
                 <article class="w-44 flex-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-                    <div class="mb-2 text-3xl leading-none font-bold">3</div>
-                    <div class="text-sm text-gray-500">Total Reports</div>
+<div class="mb-2 text-3xl leading-none font-bold">{{ $issues->count() }}</div>                    <div class="text-sm text-gray-500">Total Reports</div>
                 </article>
                 <article class="w-44 flex-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-                    <div class="mb-2 text-3xl leading-none font-bold text-rose-700">1</div>
-                    <div class="text-sm text-gray-500">Pending</div>
+<div class="mb-2 text-3xl leading-none font-bold text-rose-700">{{ $issues->where('status','Pending')->count() }}</div>                    <div class="text-sm text-gray-500">Pending</div>
                 </article>
                 <article class="w-44 flex-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-                    <div class="mb-2 text-3xl leading-none font-bold text-amber-600">1</div>
-                    <div class="text-sm text-gray-500">Ongoing</div>
+<div class="mb-2 text-3xl leading-none font-bold text-amber-600">{{ $issues->where('status','Ongoing')->count() }}</div>                    <div class="text-sm text-gray-500">Ongoing</div>
                 </article>
                 <article class="w-44 flex-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-                    <div class="mb-2 text-3xl leading-none font-bold text-green-600">1</div>
-                    <div class="text-sm text-gray-500">Resolved</div>
+<div class="mb-2 text-3xl leading-none font-bold text-green-600">{{ $issues->where('status','Resolved')->count() }}</div>                    <div class="text-sm text-gray-500">Resolved</div>
                 </article>
             </section>
 
@@ -66,82 +62,42 @@
                 </select>
             </section>
 
-            <section id="admin-report-list" class="grid gap-2.5">
-                <article class="mx-auto w-full max-w-4xl rounded-xl border border-gray-200 bg-white px-4 pt-4 pb-3 sm:px-6" data-status="resolved">
-                    <div class="mb-2.5 flex flex-col items-start justify-between gap-1.5 sm:flex-row sm:items-start">
-                        <h2 class="text-[26px] leading-tight font-bold">Chair</h2>
-                        <div class="text-left sm:text-right">
-                            <span class="block text-lg font-semibold text-green-600">Resolved on: April 12, 2026, 3:00 PM</span>
-                        </div>
-                    </div>
-                    <div class="mb-2.5 grid max-w-[760px] grid-cols-1 gap-x-6 gap-y-1.5 text-base leading-[1.4] text-[#1f3552] md:grid-cols-2">
-                        <div><span class="font-semibold text-[#102842]">Location:</span> Room 301, Engineering Building</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">ID:</span> 123456</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">Date:</span> April 10, 2026, 1:33 PM</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">Priority:</span> High</div>
-                        <div class="invisible">.</div>
-                    </div>
-                    <div class="mb-0.5 text-[17px] font-semibold text-[#102842]">Description:</div>
-                    <div class="mb-2 text-[17px] text-[#1f3552]">Broken leg chair, unsafe to use</div>
-                    <div class="mt-2 flex justify-start gap-2 border-t border-gray-100 pt-2 sm:justify-end">
-                        <button class="rounded-lg bg-blue-700 px-3 py-2 text-sm font-semibold text-white">Update Status</button>
-                        <button class="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white">Delete</button>
-                    </div>
-                </article>
-
-                <article class="mx-auto w-full max-w-4xl rounded-xl border border-gray-200 bg-white px-4 pt-4 pb-3 sm:px-6" data-status="ongoing">
-                    <div class="mb-2.5 flex flex-col items-start justify-between gap-1.5 sm:flex-row sm:items-start">
-                        <h2 class="text-[26px] leading-tight font-bold">Light</h2>
-                        <div class="text-left sm:text-right">
-                            <span class="block text-lg font-semibold text-amber-600">Ongoing</span>
-                        </div>
-                    </div>
-                    <div class="mb-2.5 grid max-w-[760px] grid-cols-1 gap-x-6 gap-y-1.5 text-base leading-[1.4] text-[#1f3552] md:grid-cols-2">
-                        <div><span class="font-semibold text-[#102842]">Location:</span> Hallway 2F, IT Building</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">ID:</span> 112345</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">Date:</span> February 3, 2026, 8:07 AM</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">Priority:</span> Medium</div>
-                        <div class="invisible">.</div>
-                    </div>
-                    <div class="mb-0.5 text-[17px] font-semibold text-[#102842]">Description:</div>
-                    <div class="mb-2 text-[17px] text-[#1f3552]">Flickering fluorescent light</div>
-                    <div class="mt-2 flex justify-start gap-2 border-t border-gray-100 pt-2 sm:justify-end">
-                        <button class="rounded-lg bg-blue-700 px-3 py-2 text-sm font-semibold text-white">Update Status</button>
-                        <button class="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white">Delete</button>
-                    </div>
-                </article>
-
-                <article class="mx-auto w-full max-w-4xl rounded-xl border border-gray-200 bg-white px-4 pt-4 pb-3 sm:px-6" data-status="pending">
-                    <div class="mb-2.5 flex flex-col items-start justify-between gap-1.5 sm:flex-row sm:items-start">
-                        <h2 class="text-[26px] leading-tight font-bold">Window</h2>
-                        <div class="text-left sm:text-right">
-                            <span class="block text-lg font-semibold text-red-500">Pending</span>
-                        </div>
-                    </div>
-                    <div class="mb-2.5 grid max-w-[760px] grid-cols-1 gap-x-6 gap-y-1.5 text-base leading-[1.4] text-[#1f3552] md:grid-cols-2">
-                        <div><span class="font-semibold text-[#102842]">Location:</span> DPT 213, New Building</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">ID:</span> 142153</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">Date:</span> March 2, 2026, 10:27 AM</div>
-                        <div class="invisible">.</div>
-                        <div><span class="font-semibold text-[#102842]">Priority:</span> Medium</div>
-                        <div class="invisible">.</div>
-                    </div>
-                    <div class="mb-0.5 text-[17px] font-semibold text-[#102842]">Description:</div>
-                    <div class="mb-2 text-[17px] text-[#1f3552]">Window latch broken, cannot close properly</div>
-                    <div class="mt-2 flex justify-start gap-2 border-t border-gray-100 pt-2 sm:justify-end">
-                        <button class="rounded-lg bg-blue-700 px-3 py-2 text-sm font-semibold text-white">Update Status</button>
-                        <button class="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white">Delete</button>
-                    </div>
-                </article>
-            </section>
+          <section class="grid gap-2.5">
+    @forelse($issues as $issue)
+    <article class="mx-auto w-full max-w-4xl rounded-xl border border-gray-200 bg-white px-6 pt-4 pb-3">
+        <div class="mb-2.5 flex flex-col items-start justify-between gap-1.5 sm:flex-row sm:items-start">
+            <h2 class="text-[26px] leading-tight font-bold">{{ $issue->location }}</h2>
+            <div class="text-left sm:text-right">
+                <span class="block text-lg font-semibold
+                    {{ $issue->status === 'Resolved' ? 'text-green-600' : '' }}
+                    {{ $issue->status === 'Ongoing' ? 'text-amber-600' : '' }}
+                    {{ $issue->status === 'Pending' ? 'text-red-500' : '' }}">
+                    {{ $issue->status }}
+                </span>
+                <span class="mt-1 block text-base text-[#1f3552]">
+                    <span class="font-semibold text-[#102842]">Priority:</span> {{ ucfirst($issue->priority) }}
+                </span>
+            </div>
+        </div>
+        <div class="mb-2.5 grid max-w-[760px] grid-cols-1 gap-x-6 gap-y-1.5 text-base leading-[1.4] text-[#1f3552] md:grid-cols-2">
+            <div><span class="font-semibold text-[#102842]">Location:</span> {{ $issue->location }}</div>
+            <div class="invisible">.</div>
+            <div><span class="font-semibold text-[#102842]">ID:</span> {{ $issue->id_number }}</div>
+            <div class="invisible">.</div>
+            <div><span class="font-semibold text-[#102842]">Date:</span> {{ $issue->created_at->format('F j, Y, g:i A') }}</div>
+            <div class="invisible">.</div>
+        </div>
+        <div class="mb-0.5 text-[17px] font-semibold text-[#102842]">Description:</div>
+        <div class="mb-2 text-[17px] text-[#1f3552]">{{ $issue->description }}</div>
+        <div class="mt-2 flex justify-start gap-2 border-t border-gray-100 pt-2 sm:justify-end">
+            <button class="rounded-lg bg-blue-700 px-3 py-2 text-sm font-semibold text-white">Update Status</button>
+            <button class="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white">Delete</button>
+        </div>
+    </article>
+    @empty
+    <p class="text-center text-gray-400 py-6">No issues reported yet.</p>
+    @endforelse
+</section>
         </main>
     </div>
 
