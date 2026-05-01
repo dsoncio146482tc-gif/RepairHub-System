@@ -24,7 +24,7 @@
             <a href="{{ route('report_issue') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Report Issue</a>
             <a href="{{ route('my_report') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Reports</a>
             <a href="{{ route('admin.dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Admin Dashboard</a>
-            <a href="{{ route('login') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Log in</a>
+            <a href="{{ route('login') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Log Out</a>
         </nav>
     </aside>
 
@@ -82,8 +82,9 @@
                    <tbody>
     @forelse($issues as $issue)
     <tr class="border-b border-gray-200 hover:bg-gray-50">
-        <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">{{ $issue->location }}</td>
-        <td class="py-3 text-[15px] text-gray-600">{{ $issue->description }}</td>
+        <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">{{ $issue->description }}</td>
+        <td class="py-3 text-[15px] text-gray-600">{{ $issue->location }}</td>
+        <td class="py-3 text-[15px] text-gray-700 whitespace-nowrap">{{ ucfirst($issue->priority) }}</td>
         <td class="py-3 text-base font-bold whitespace-nowrap
             {{ $issue->status === 'Resolved' ? 'text-green-600' : '' }}
             {{ $issue->status === 'Ongoing' ? 'text-amber-500' : '' }}
@@ -93,7 +94,7 @@
         <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap">{{ $issue->created_at->format('F j, Y') }}</td>
     </tr>
     @empty
-    <tr><td colspan="4" class="py-6 text-center text-gray-400">No issues reported yet.</td></tr>
+    <tr class="h-32"><td colspan="5" class="py-10 text-center text-gray-400 align-middle">No issues reported yet.</td></tr>
     @endforelse
 </tbody>
                 </table>

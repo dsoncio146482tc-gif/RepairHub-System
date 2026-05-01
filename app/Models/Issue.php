@@ -9,4 +9,8 @@ class Issue extends Model
     protected $fillable = [
         'location', 'description', 'photo', 'priority', 'id_number', 'status'
     ];
+
+    protected $casts = [
+        'photo' => 'array',
+    ];
 }

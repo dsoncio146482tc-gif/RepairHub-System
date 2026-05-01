@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -60,6 +61,42 @@ class AuthController extends Controller
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email'); // Keeps the email in the input box for convenience
+    }
+
+    public function googleLogin()
+    {
+        return view('auth.google_select');
+    }
+
+    public function googleAuthenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return $this->redirectBasedOnRole(Auth::user());
+        }
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (! $user) {
+            $user = User::create([
+                'name' => Str::before($credentials['email'], '@'),
+                'email' => $credentials['email'],
+                'password' => Hash::make($credentials['password']),
+                'role' => 'user',
+            ]);
+
+            Auth::login($user);
+            return $this->redirectBasedOnRole($user);
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     // COMMENT: Helper function to determine where the user goes after logging in

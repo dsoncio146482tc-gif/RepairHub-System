@@ -17,6 +17,8 @@
         </div>
         <nav class="flex-1 p-4 space-y-1">
             <a href="{{ route('dashboard') }}" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10">Home</a>
+            <a href="{{ route('report_issue') }}" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10">Report Issue</a>
+            <a href="{{ route('my_report') }}" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10">Reports</a>
             <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-4 py-2.5 text-sm font-bold text-amber-300 bg-white/10">Admin Dashboard</a>
             <form action="{{ route('logout') }}" method="POST" class="mt-4">
                 @csrf

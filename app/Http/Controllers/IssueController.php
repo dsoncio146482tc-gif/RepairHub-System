@@ -16,17 +16,28 @@ class IssueController extends Controller
         try {
             $path = null;
 
-            // 1. PHOTO UPLOAD: Checks if the user uploaded an image
+            // 1. PHOTO UPLOAD: Checks if the user uploaded one or more images
             if ($request->hasFile('photo')) {
-                // Saves the file to 'storage/app/public/photos' and gets the path
-                $path = $request->file('photo')->store('photos', 'public');
+                $files = $request->file('photo');
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+
+                $paths = [];
+                foreach ($files as $file) {
+                    if ($file) {
+                        $paths[] = $file->store('photos', 'public');
+                    }
+                }
+
+                $path = count($paths) ? json_encode($paths) : null;
             }
 
             // 2. DATABASE INSERT: Creates a new record in the 'issues' table
             Issue::create([
                 'location'    => $request->input('location'),    // The room or area reported
                 'description' => $request->input('description'), // Details of the damage
-                'photo'       => $path,                          // The file path of the uploaded image
+                'photo'       => $path,                          // The file paths of uploaded image(s)
                 'priority'    => $request->input('priority', 'low'), // High, Medium, or Low (Default: low)
                 'id_number'   => $request->input('id_number'),   // ID of the student/staff reporting
                 'status'      => 'Pending',                      // Initial status for all new reports

@@ -36,6 +36,10 @@ Route::get('/login', function () {
 // Processes the login credentials
 Route::post('/login/submit', [AuthController::class, 'login'])->name('login.post');
 
+// Google sign-in mock flow
+Route::get('/login/google', [AuthController::class, 'googleLogin'])->name('login.google');
+Route::post('/login/google', [AuthController::class, 'googleAuthenticate'])->name('login.google.submit');
+
 // --- USER DASHBOARD ROUTES ---
 // Displays the main dashboard with all reported issues
 Route::get('/dashboard', function () {
