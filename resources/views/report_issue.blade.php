@@ -67,11 +67,11 @@
             <div class="mb-4 flex flex-col gap-2 sm:flex-row">
                 <button type="button" onclick="document.getElementById('photo-upload').click()"
                     class="flex-1 rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
-                    📁 Upload from Gallery
+                     Upload from Gallery
                 </button>
                 <button type="button" onclick="document.getElementById('photo-camera').click()"
                     class="flex-1 rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
-                    📷 Take a Photo
+                    Take a Photo
                 </button>
             </div>
             <input type="file" id="photo-upload" name="photo[]" accept="image/*" multiple class="hidden" onchange="handlePhoto(this)">
