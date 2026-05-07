@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Dashboard - RepairHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -12,14 +13,18 @@
 
     <aside id="side-nav" class="fixed top-0 left-0 z-50 flex h-full w-64 -translate-x-full flex-col bg-[#6b0f1a] shadow-xl transition-transform duration-200 ease-out">
         <div class="border-b border-white/15 px-6 py-5">
-            <span class="block text-xl font-bold text-white">RepairHub</span>
+            <a href="{{ route('dashboard') }}" class="block text-xl font-bold text-white">RepairHub</a>
             <span class="text-[10px] text-white/70 uppercase tracking-wider font-bold">Admin Portal</span>
         </div>
         
         <nav class="flex-1 p-4 space-y-1">
-            <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-4 py-2.5 text-sm font-bold text-amber-300 bg-white/10">
-                Dashboard Overview
+            <a href="{{ route('dashboard') }}" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10 transition">
+                Home
             </a>
+
+            <div class="block rounded-lg px-4 py-2.5 text-sm font-bold text-amber-300 bg-white/10">
+                Dashboard Overview
+            </div>
             
             <div class="pt-4 mt-4 border-t border-white/10">
                 <form action="{{ route('logout') }}" method="POST">
@@ -68,9 +73,17 @@
                             <div class="flex items-center gap-2 mt-1">
                                 <span class="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">ID: #{{ $issue->id_number }}</span>
                                 <span class="text-gray-300">|</span>
-                                <span class="text-[11px] font-bold {{ $issue->priority === 'high' ? 'text-red-500' : 'text-blue-500' }} uppercase">
-                                    {{ $issue->priority }} Priority
-                                </span>
+                                @if($issue->images->count() > 0)
+                                    @php
+                                        $priorities = $issue->images->pluck('priority')->toArray();
+                                        $highestPriority = in_array('high', $priorities) ? 'high' : (in_array('medium', $priorities) ? 'medium' : 'low');
+                                    @endphp
+                                    <span class="text-[11px] font-bold {{ $highestPriority === 'high' ? 'text-red-500' : ($highestPriority === 'medium' ? 'text-yellow-600' : 'text-green-600') }} uppercase">
+                                        {{ ucfirst($highestPriority) }} Priority
+                                    </span>
+                                @else
+                                    <span class="text-[11px] font-bold text-gray-500 uppercase">Not Classified</span>
+                                @endif
                             </div>
                         </div>
                         <span class="px-3 py-1 rounded-md text-[10px] font-black uppercase shadow-sm
@@ -85,6 +98,39 @@
                         <span class="block text-[10px] font-black text-gray-400 uppercase mb-1">User Description</span>
                         <p class="text-sm text-gray-700 leading-relaxed italic">"{{ $issue->description }}"</p>
                     </div>
+
+                    @if($issue->images->count() > 0)
+                    <div class="mb-5 bg-blue-50 rounded-lg p-4 border-l-4 border-blue-300">
+                        <div class="flex flex-col gap-3">
+                            <span class="block text-[10px] font-black text-gray-600 uppercase">Photos ({{ $issue->images->count() }}) - Click to change priority</span>
+                            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                @foreach($issue->images as $image)
+                                <div class="group overflow-hidden rounded-xl border bg-white shadow-sm transition hover:shadow-md {{ $image->priority === 'high' ? 'border-red-200' : ($image->priority === 'medium' ? 'border-amber-200' : 'border-emerald-200') }}">
+                                    <div class="relative">
+                                        <img src="{{ asset('storage/' . $image->photo_path) }}" alt="Issue photo" class="h-40 w-full object-cover">
+                                        <div class="absolute left-3 top-3 rounded-full px-2 py-1 text-[10px] font-semibold uppercase shadow-sm {{ $image->priority === 'high' ? 'bg-red-600 text-white' : ($image->priority === 'medium' ? 'bg-amber-500 text-slate-900' : 'bg-emerald-600 text-white') }}">
+                                            {{ strtoupper($image->priority) }}
+                                        </div>
+                                        <div class="absolute inset-0 bg-black/30 opacity-0 transition duration-200 group-hover:opacity-100 flex items-center justify-center">
+                                            <div class="grid gap-2 rounded-lg bg-black/60 p-3 text-center">
+                                                <button onclick="updateImagePriority({{ $image->id }}, 'low')" class="rounded-md bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700">LOW</button>
+                                                <button onclick="updateImagePriority({{ $image->id }}, 'medium')" class="rounded-md bg-amber-500 px-3 py-2 text-xs font-bold text-slate-900 hover:bg-amber-600">MED</button>
+                                                <button onclick="updateImagePriority({{ $image->id }}, 'high')" class="rounded-md bg-red-600 px-3 py-2 text-xs font-bold text-white hover:bg-red-700">HIGH</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3 border-t px-3 py-2">
+                                        <span class="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500">Priority</span>
+                                        <span class="rounded-full px-3 py-1 text-[11px] font-semibold uppercase {{ $image->priority === 'high' ? 'bg-red-600 text-white' : ($image->priority === 'medium' ? 'bg-amber-500 text-slate-900' : 'bg-emerald-600 text-white') }}">
+                                            {{ strtoupper($image->priority) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                         <span class="text-[11px] text-gray-400">Reported: <b>{{ $issue->created_at->diffForHumans() }}</b></span>
@@ -127,6 +173,26 @@
             document.getElementById('side-nav').classList.add('-translate-x-full');
             document.getElementById('nav-overlay').classList.replace('opacity-100', 'opacity-0');
             document.getElementById('nav-overlay').classList.add('pointer-events-none');
+        }
+
+        function updateImagePriority(imageId, priority) {
+            fetch(`/admin/images/${imageId}/priority`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify({ priority: priority })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(err => alert('Error updating priority'));
         }
     </script>
 </body>

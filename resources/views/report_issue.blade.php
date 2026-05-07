@@ -55,11 +55,11 @@
             <textarea id="description" name="description" placeholder="Describe the issue in detail..." required class="mb-4 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" rows="4"></textarea>
 
             <label class="mb-2 block text-sm font-semibold text-gray-800">
-                Upload Photo <span class="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-600"> automatically select priority level</span>
+                Upload Photos <span class="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-600"> automatically identified priority level</span>
             </label>
             <div id="photo-preview" class="mb-4 hidden">
-                <div id="preview-grid" class="grid gap-3 sm:grid-cols-2"></div>
-                <p class="mt-1 text-xs text-gray-500">Photo selected ✓</p>
+                <div id="preview-grid" class="grid gap-4 sm:grid-cols-2 mb-3"></div>
+                <p class="text-xs text-gray-500 bg-blue-50 p-2 rounded">✓ Photos analyzed and classified</p>
             </div>
             <div id="photo-placeholder" class="mb-3 cursor-pointer rounded-md border-2 border-dashed border-red-300 p-6 text-center text-sm text-gray-400" onclick="document.getElementById('photo-upload').click()">
                 Click to upload photos<br><span class="text-xs">JPG, PNG up to 10MB each</span>
@@ -77,21 +77,6 @@
             <input type="file" id="photo-upload" name="photo[]" accept="image/*" multiple class="hidden" onchange="handlePhoto(this)">
             <input type="file" id="photo-camera" name="photo[]" accept="image/*" capture="environment" multiple class="hidden" onchange="handlePhoto(this)">
 
-            <input type="hidden" id="priority-input" name="priority" value="low">
-            <label class="mb-2 block text-sm font-semibold text-gray-800">Priority Level</label>
-            <div class="mb-4 flex flex-col gap-2 sm:flex-row">
-                <div id="btn-low" class="w-full rounded-md bg-green-100 px-2 py-2 text-center text-sm font-medium text-green-700 sm:w-1/3">
-                    Low<br><span class="text-xs font-normal">Minor Issue</span>
-                </div>
-                <div id="btn-medium" class="w-full rounded-md bg-yellow-100 px-2 py-2 text-center text-sm font-medium text-yellow-700 sm:w-1/3">
-                    Medium<br><span class="text-xs font-normal">Affects Use</span>
-                </div>
-                <div id="btn-high" class="w-full rounded-md bg-red-100 px-2 py-2 text-center text-sm font-medium text-red-700 sm:w-1/3">
-                    High<br><span class="text-xs font-normal">Urgent/Safety</span>
-                </div>
-            </div>
-            <p id="priority-note" class="mb-4 text-xs text-gray-400 italic">Upload a photo above to auto-detect priority.</p>
-
             <label for="id-number" class="mb-2 block text-sm font-semibold text-gray-800">Student ID *</label>
             <input type="text" id="id-number" name="id_number" placeholder="Enter your Student ID" required class="mb-4 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
 
@@ -106,16 +91,19 @@
     <script>
 
     let selectedFiles = [];
+    let filePriorities = []; // Maps file index to priority
 
     document.getElementById('report-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const form = this;
     const formData = new FormData(form);
 
-    // Clear existing photo files and add all selected files
+    // Clear existing photo files and add all selected files with their priority values
     formData.delete('photo[]');
-    selectedFiles.forEach(file => {
+    formData.delete('photo_priority[]');
+    selectedFiles.forEach((file, index) => {
         formData.append('photo[]', file);
+        formData.append('photo_priority[]', filePriorities[index] || 'low');
     });
 
    fetch(form.action, {
@@ -123,7 +111,12 @@
         body: formData,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.success) {
             document.querySelector('h1').classList.add('hidden');
@@ -132,11 +125,16 @@
             s.classList.remove('hidden');
             s.classList.add('flex');
         } else {
-            alert('Error: ' + data.error);
+            const errorMsg = data.error || 'Unknown error occurred';
+            alert('Error: ' + errorMsg);
         }
     })
-    .catch(err => alert('Something went wrong: ' + err));
+    .catch(err => {
+        console.error('Form submission error:', err);
+        alert('Something went wrong: ' + err.message);
+    });
 });
+
         function handlePhoto(input) {
             if (!input.files || input.files.length === 0) return;
             const files = Array.from(input.files);
@@ -151,6 +149,8 @@
                 }
             });
 
+            // Keep priority list in sync with selected files
+            filePriorities = selectedFiles.map((_, index) => filePriorities[index] || 'low');
             updatePreview();
             detectPriority(selectedFiles);
         }
@@ -170,14 +170,23 @@
                     const wrapper = document.createElement('div');
                     wrapper.className = 'relative';
 
+                    // Add priority badge
+                    const priority = filePriorities[index] || 'analyzing...';
+                    const priorityBadge = document.createElement('div');
+                    priorityBadge.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-bold text-white ' +
+                        (priority === 'high' ? 'bg-red-600' : priority === 'medium' ? 'bg-yellow-600' : 'bg-green-600');
+                    priorityBadge.textContent = priority.toUpperCase();
+                    priorityBadge.id = `priority-badge-${index}`;
+
                     // Add remove button
                     const removeBtn = document.createElement('button');
                     removeBtn.type = 'button';
-                    removeBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 text-xs hover:bg-red-600';
+                    removeBtn.className = 'absolute bottom-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 text-sm hover:bg-red-600 font-bold';
                     removeBtn.textContent = '×';
                     removeBtn.onclick = () => removePhoto(index);
 
                     wrapper.appendChild(img);
+                    wrapper.appendChild(priorityBadge);
                     wrapper.appendChild(removeBtn);
                     previewGrid.appendChild(wrapper);
                 };
@@ -192,6 +201,7 @@
 
         function removePhoto(index) {
             selectedFiles.splice(index, 1);
+            filePriorities.splice(index, 1);
             updatePreview();
             if (selectedFiles.length === 0) {
                 document.getElementById('photo-preview').classList.add('hidden');
@@ -201,37 +211,71 @@
         }
 
         function detectPriority(files) {
-            const fileList = Array.isArray(files) ? files : [files];
-            let priority = 'low';
-            const highKeywords = ['fire', 'flood', 'broken', 'danger', 'electric', 'crack'];
-
-            const hasHigh = fileList.some(file => {
-                const name = file.name.toLowerCase();
-                return highKeywords.some(keyword => name.includes(keyword));
+            // Simulate AI image analysis for each file
+            files.forEach((file, index) => {
+                // Create a FileReader to analyze the image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // Get image data for analysis
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                        
+                        // Analyze pixel colors to detect damage patterns
+                        let darkPixels = 0;
+                        let brownishPixels = 0;
+                        let totalPixels = data.length / 4;
+                        
+                        for (let i = 0; i < data.length; i += 4) {
+                            const r = data[i];
+                            const g = data[i + 1];
+                            const b = data[i + 2];
+                            const brightness = (r + g + b) / 3;
+                            
+                            // Dark pixels (cracks, deep damage)
+                            if (brightness < 85) darkPixels++;
+                            
+                            // Brownish/reddish tones (rust, stains)
+                            if (r > g && r > b && r > 100) brownishPixels++;
+                        }
+                        
+                        // Calculate damage score
+                        let damageScore = 0;
+                        const darkPercentage = (darkPixels / totalPixels) * 100;
+                        const brownishPercentage = (brownishPixels / totalPixels) * 100;
+                        
+                        if (darkPercentage > 40) damageScore += 40;
+                        else if (darkPercentage > 25) damageScore += 20;
+                        
+                        if (brownishPercentage > 35) damageScore += 30;
+                        else if (brownishPercentage > 15) damageScore += 15;
+                        
+                        // Determine priority
+                        let priority = 'low';
+                        if (damageScore >= 65) priority = 'high';
+                        else if (damageScore >= 35) priority = 'medium';
+                        
+                        filePriorities[index] = priority;
+                        
+                        // Update badge
+                        const badge = document.getElementById(`priority-badge-${index}`);
+                        if (badge) {
+                            badge.textContent = priority.toUpperCase();
+                            badge.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-bold text-white ' +
+                                (priority === 'high' ? 'bg-red-600' : priority === 'medium' ? 'bg-yellow-600' : 'bg-green-600');
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             });
-
-            if (hasHigh) {
-                priority = 'high';
-            } else {
-                const largeFile = fileList.some(file => file.size > 2 * 1024 * 1024);
-                priority = largeFile ? 'medium' : 'low';
-            }
-
-            setPriority(priority);
-        }
-
-        function setPriority(level) {
-            document.getElementById('priority-input').value = level;
-            document.getElementById('btn-low').className = 'w-full sm:w-1/3 rounded-md px-2 py-2 text-center text-sm font-medium ' +
-                (level === 'low' ? 'bg-green-500 text-white ring-2 ring-green-400' : 'bg-green-100 text-green-700');
-            document.getElementById('btn-medium').className = 'w-full sm:w-1/3 rounded-md px-2 py-2 text-center text-sm font-medium ' +
-                (level === 'medium' ? 'bg-yellow-500 text-white ring-2 ring-yellow-400' : 'bg-yellow-100 text-yellow-700');
-            document.getElementById('btn-high').className = 'w-full sm:w-1/3 rounded-md px-2 py-2 text-center text-sm font-medium ' +
-                (level === 'high' ? 'bg-red-500 text-white ring-2 ring-red-400' : 'bg-red-100 text-red-700');
-
-            const labels = { low: 'Low priority auto-detected.', medium: 'Medium priority auto-detected.', high: '⚠️ High priority auto-detected!' };
-            document.getElementById('priority-note').textContent = labels[level];
-
         }
 
         function openSideNav() {

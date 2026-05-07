@@ -66,32 +66,47 @@
         <div>
             <div class="mb-3 flex items-center justify-between">
                 <h3 class="text-2xl font-bold">Issues</h3>
-                <button id="view-all-issues-btn" type="button" class="text-sm font-medium text-red-800">View all</button>
+                <button id="view-all-issues-btn" type="button" class="hidden text-sm font-medium text-red-800">View all</button>
             </div>
             <div class="overflow-x-auto rounded-xl border border-gray-200">
-                <table class="min-w-full border-collapse">
+                <table class="min-w-full border-collapse table-fixed">
+                    <colgroup>
+                        <col class="w-[18%]">
+                        <col class="w-[34%]">
+                        <col class="w-[14%]">
+                        <col class="w-[14%]">
+                        <col class="w-[20%]">
+                    </colgroup>
                     <thead class="bg-gray-50">
-                        <tr class="border-b border-gray-200 text-left">
-                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap">Object</th>
-                            <th class="px-4 py-3 text-base font-semibold text-gray-900">Location</th>
-                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap">Priority Level</th>
-                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap">Status</th>
-                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap">Date</th>
+                        <tr class="border-b border-gray-200 text-left align-middle">
+                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Location</th>
+                            <th class="px-4 py-3 text-base font-semibold text-gray-900 align-middle">Description</th>
+                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Status</th>
+                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Images</th>
+                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Date</th>
                         </tr>
                     </thead>
-                   <tbody>
+                   <tbody id="issues-table-body">
     @forelse($issues as $issue)
-    <tr class="border-b border-gray-200 hover:bg-gray-50">
-        <td class="py-3 pl-4 text-base font-semibold whitespace-nowrap">{{ $issue->description }}</td>
-        <td class="py-3 text-[15px] text-gray-600">{{ $issue->location }}</td>
-        <td class="py-3 text-[15px] text-gray-700 whitespace-nowrap">{{ ucfirst($issue->priority) }}</td>
-        <td class="py-3 text-base font-bold whitespace-nowrap
+    <tr class="border-b border-gray-200 hover:bg-gray-50 align-middle">
+        <td class="px-4 py-3 text-base font-semibold whitespace-nowrap align-middle">{{ $issue->location }}</td>
+        <td class="px-4 py-3 text-[15px] text-gray-600 align-middle">{{ $issue->description }}</td>
+        <td class="px-4 py-3 text-base font-bold whitespace-nowrap align-middle
             {{ $issue->status === 'Resolved' ? 'text-green-600' : '' }}
             {{ $issue->status === 'Ongoing' ? 'text-amber-500' : '' }}
             {{ $issue->status === 'Pending' ? 'text-red-800' : '' }}">
             {{ $issue->status }}
         </td>
-        <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap">{{ $issue->created_at->format('F j, Y') }}</td>
+        <td class="py-3 text-[15px] text-gray-700 whitespace-nowrap align-middle">
+            @if($issue->images->count() > 0)
+                <button onclick="openImageModal({{ $issue->id }})" class="text-blue-600 hover:text-blue-800 font-medium">
+                    {{ $issue->images->count() }} photo(s)
+                </button>
+            @else
+                <span class="text-green-600 font-semibold">Sent successfully</span>
+            @endif
+        </td>
+        <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap align-middle">{{ $issue->created_at->format('F j, Y') }}</td>
     </tr>
     @empty
     <tr class="h-32"><td colspan="5" class="py-10 text-center text-gray-400 align-middle">No issues reported yet.</td></tr>
@@ -166,37 +181,47 @@
             applyDrawerLayout(navOpen);
         });
 
-        var issuesTableBody = document.getElementById('issues-table-body');
-        var viewAllIssuesBtn = document.getElementById('view-all-issues-btn');
-        var issuesRows = Array.prototype.slice.call(issuesTableBody.querySelectorAll('tr[data-date]'));
-        var defaultVisibleRows = 10;
+        function openImageModal(issueId) {
+            fetch(`/api/issues/${issueId}/images`)
+                .then(res => res.json())
+                .then(data => {
+                    const modal = document.getElementById('image-modal');
+                    const gallery = document.getElementById('image-gallery');
+                    gallery.innerHTML = '';
 
-        issuesRows.sort(function (a, b) {
-            var dateA = Date.parse(a.getAttribute('data-date'));
-            var dateB = Date.parse(b.getAttribute('data-date'));
-            return dateB - dateA;
-        });
+                    data.images.forEach(img => {
+                        const container = document.createElement('div');
+                        container.className = 'relative group';
+                        container.innerHTML = `
+                            <img src="/storage/${img.photo_path}" alt="Issue photo" class="w-full rounded-lg border border-gray-200 object-contain max-h-96">
+                            <div class="absolute top-2 left-2 px-2 py-1 rounded text-xs font-bold text-white ${img.priority === 'high' ? 'bg-red-600' : img.priority === 'medium' ? 'bg-yellow-600' : 'bg-green-600'}">
+                                ${img.priority.toUpperCase()}
+                            </div>
+                        `;
+                        gallery.appendChild(container);
+                    });
 
-        function renderIssues(showAll) {
-            issuesTableBody.innerHTML = '';
-            var rowsToRender = showAll ? issuesRows : issuesRows.slice(0, defaultVisibleRows);
-
-            rowsToRender.forEach(function (row, index) {
-                var isLast = index === rowsToRender.length - 1;
-                row.classList.remove('border-b', 'border-gray-200');
-                if (!isLast) {
-                    row.classList.add('border-b', 'border-gray-200');
-                }
-                issuesTableBody.appendChild(row);
-            });
+                    modal.classList.remove('hidden');
+                });
         }
 
-        renderIssues(false);
-
-        viewAllIssuesBtn.addEventListener('click', function () {
-            renderIssues(true);
-            viewAllIssuesBtn.style.display = 'none';
-        });
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
     </script>
+
+    <div id="image-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-96 overflow-auto">
+            <div class="sticky top-0 flex items-center justify-between bg-gray-50 px-6 py-4 border-b">
+                <h2 class="text-xl font-bold">Issue Photos</h2>
+                <button onclick="closeImageModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="image-gallery" class="p-6 space-y-4"></div>
+        </div>
+    </div>
 </body>
 </html>

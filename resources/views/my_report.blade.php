@@ -57,70 +57,66 @@
             </section>
 
             <section id="report-list" class="space-y-3">
-                <article class="mx-auto w-full max-w-4xl rounded-xl bg-gray-50 p-4" data-status="resolved" data-student-id="123456">
+                @forelse($issues as $issue)
+                <article class="mx-auto w-full max-w-4xl rounded-xl bg-gray-50 p-4" data-status="{{ strtolower($issue->status) }}" data-student-id="{{ $issue->id_number }}">
                     <div class="mb-1 flex items-start justify-between gap-3">
-                        <h2 class="text-xl font-semibold text-gray-900">Chair</h2>
+                        <h2 class="text-xl font-semibold text-gray-900">{{ $issue->location }}</h2>
                         <div class="text-right">
-                            <p class="text-base font-medium text-green-600">Resolved on: April 12, 2026, 3:00 PM</p>
+                            @if($issue->status === 'Resolved')
+                                <p class="text-base font-medium text-green-600">Resolved on: {{ $issue->updated_at->format('F j, Y, g:i A') }}</p>
+                            @else
+                                <p class="text-base font-medium {{ $issue->status === 'Ongoing' ? 'text-indigo-500' : 'text-amber-600' }}">
+                                    {{ $issue->status }}
+                                </p>
+                            @endif
                         </div>
                     </div>
                     <div class="space-y-1 text-base text-gray-800">
-                        <p><span class="font-medium text-gray-700">Location:</span> Room 301, Engineering Building</p>
-                        <p><span class="font-medium text-gray-700">ID:</span> 123456</p>
-                        <p><span class="font-medium text-gray-700">Date:</span> April 10, 2026, 1:33 PM</p>
-                        <p><span class="font-medium text-gray-700">Priority Level:</span> <span class="text-gray-800">High</span></p>
+                        <p><span class="font-medium text-gray-700">Location:</span> {{ $issue->location }}</p>
+                        <p><span class="font-medium text-gray-700">Student ID:</span> {{ $issue->id_number }}</p>
+                        <p><span class="font-medium text-gray-700">Date:</span> {{ $issue->created_at->format('F j, Y, g:i A') }}</p>
+                        <p><span class="font-medium text-gray-700">Priority Level:</span> 
+                            @if($issue->images->count() > 0)
+                                @php
+                                    $priorities = $issue->images->pluck('priority')->toArray();
+                                    $displayPriority = in_array('high', $priorities) ? 'High' : (in_array('medium', $priorities) ? 'Medium' : 'Low');
+                                @endphp
+                                <span class="inline-block px-2 py-1 rounded text-sm font-bold text-white
+                                    {{ in_array('high', $priorities) ? 'bg-red-600' : (in_array('medium', $priorities) ? 'bg-yellow-600' : 'bg-green-600') }}">
+                                    {{ $displayPriority }}
+                                </span>
+                            @else
+                                <span class="text-gray-500">Not classified</span>
+                            @endif
+                        </p>
                     </div>
                     <div class="mt-1 flex items-center justify-between">
                         <p class="text-base font-medium text-gray-700">Description:</p>
                     </div>
-                    <p class="text-base text-gray-800">Broken leg chair, unsafe to use</p>
-                    <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                        <button class="rounded-lg bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white">Update Status</button>
-                        <button class="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white">Delete</button>
+                    <p class="text-base text-gray-800">{{ $issue->description }}</p>
+                    
+                    @if($issue->images->count() > 0)
+                    <div class="mt-4">
+                        <p class="text-base font-medium text-gray-700 mb-2">Photos ({{ $issue->images->count() }}):</p>
+                        <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach($issue->images as $image)
+                            <div class="relative rounded-lg overflow-hidden border border-gray-200">
+                                <img src="{{ asset('storage/' . $image->photo_path) }}" alt="Issue photo" class="w-full h-32 object-cover">
+                                <div class="absolute top-1 right-1 px-2 py-1 rounded text-[10px] font-bold text-white
+                                    {{ $image->priority === 'high' ? 'bg-red-600' : ($image->priority === 'medium' ? 'bg-yellow-600' : 'bg-green-600') }}">
+                                    {{ strtoupper($image->priority) }}
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
+                    @endif
                 </article>
-
-                <article class="mx-auto w-full max-w-4xl rounded-xl bg-gray-50 p-4" data-status="ongoing" data-student-id="112345">
-                    <div class="mb-1 flex items-start justify-between gap-3">
-                        <h2 class="text-xl font-semibold text-gray-900">Light</h2>
-                        <p class="text-base font-medium text-indigo-500">Ongoing</p>
-                    </div>
-                    <div class="space-y-1 text-base text-gray-800">
-                        <p><span class="font-medium text-gray-700">Location:</span> Hallway 2F, IT Building</p>
-                        <p><span class="font-medium text-gray-700">ID:</span> 112345</p>
-                        <p><span class="font-medium text-gray-700">Date:</span> February 3, 2026, 8:07 AM</p>
-                        <p><span class="font-medium text-gray-700">Priority Level:</span> <span class="text-gray-800">Medium</span></p>
-                    </div>
-                    <div class="mt-1 flex items-center justify-between">
-                        <p class="text-base font-medium text-gray-700">Description:</p>
-                    </div>
-                    <p class="text-base text-gray-800">Flickering fluorescent light</p>
-                    <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                        <button class="rounded-lg bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white">Update Status</button>
-                        <button class="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white">Delete</button>
-                    </div>
-                </article>
-
-                <article class="mx-auto w-full max-w-4xl rounded-xl bg-gray-50 p-4" data-status="pending" data-student-id="142153">
-                    <div class="mb-1 flex items-start justify-between gap-3">
-                        <h2 class="text-xl font-semibold text-gray-900">Window</h2>
-                        <p class="text-base font-medium text-amber-500">Pending</p>
-                    </div>
-                    <div class="space-y-1 text-base text-gray-800">
-                        <p><span class="font-medium text-gray-700">Location:</span> DPT 213, New Building</p>
-                        <p><span class="font-medium text-gray-700">ID:</span> 142153</p>
-                        <p><span class="font-medium text-gray-700">Date:</span> March 2, 2026, 10:27 AM</p>
-                        <p><span class="font-medium text-gray-700">Priority Level:</span> <span class="text-gray-800">Medium</span></p>
-                    </div>
-                    <div class="mt-1 flex items-center justify-between">
-                        <p class="text-base font-medium text-gray-700">Description:</p>
-                    </div>
-                    <p class="text-base text-gray-800">Window latch broken, cannot close properly</p>
-                    <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                        <button class="rounded-lg bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white">Update Status</button>
-                        <button class="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white">Delete</button>
-                    </div>
-                </article>
+                @empty
+                <div class="mx-auto w-full max-w-4xl rounded-xl bg-gray-50 p-6 text-center">
+                    <p class="text-gray-500 font-medium">No reports submitted yet.</p>
+                </div>
+                @endforelse
             </section>
         </main>
     </div>

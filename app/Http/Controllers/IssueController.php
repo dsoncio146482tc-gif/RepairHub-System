@@ -4,58 +4,94 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Issue;
+use App\Models\IssueImage;
+use App\Services\ImageClassificationService;
 
 class IssueController extends Controller
 {
-    /**
-     * COMMENT: This function handles the submission of the repair report form.
-     * It saves the location, description, photo, and other details to the database.
-     */
     public function store(Request $request)
     {
         try {
-            $path = null;
-
-            // 1. PHOTO UPLOAD: Checks if the user uploaded one or more images
-            if ($request->hasFile('photo')) {
-                $files = $request->file('photo');
-                if (!is_array($files)) {
-                    $files = [$files];
-                }
-
-                $paths = [];
-                foreach ($files as $file) {
-                    if ($file) {
-                        $paths[] = $file->store('photos', 'public');
-                    }
-                }
-
-                $path = count($paths) ? json_encode($paths) : null;
-            }
-
-            // 2. DATABASE INSERT: Creates a new record in the 'issues' table
-            Issue::create([
-                'location'    => $request->input('location'),    // The room or area reported
-                'description' => $request->input('description'), // Details of the damage
-                'photo'       => $path,                          // The file paths of uploaded image(s)
-                'priority'    => $request->input('priority', 'low'), // High, Medium, or Low (Default: low)
-                'id_number'   => $request->input('id_number'),   // ID of the student/staff reporting
-                'status'      => 'Pending',                      // Initial status for all new reports
+            $validated = $request->validate([
+                'location' => 'required|string|max:255',
+                'description' => 'required|string|max:1000',
+                'id_number' => 'required|string|max:50',
+                'photo' => 'nullable|array',
+                'photo.*' => 'image|max:10240',
+                'photo_priority' => 'nullable|array',
+                'photo_priority.*' => 'nullable|in:low,medium,high'
             ]);
 
-            // 3. SUCCESS RESPONSE: Sends a JSON message back to the frontend (AJAX)
-            return response()->json(['success' => true]);
+            $issue = Issue::create([
+                'location'    => $validated['location'],
+                'description' => $validated['description'],
+                'photo'       => null,
+                'priority'    => 'low',
+                'id_number'   => $validated['id_number'],
+                'status'      => 'Pending',
+            ]);
 
+            if ($request->hasFile('photo') && is_array($request->file('photo'))) {
+                $photoPriorities = $validated['photo_priority'] ?? [];
+                foreach ($request->file('photo') as $index => $file) {
+                    if ($file && $file->isValid()) {
+                        $photoPath = $file->store('photos', 'public');
+                        $priority = $photoPriorities[$index] ?? 'low';
+
+                        try {
+                            // Only re-classify if the client-side priority is missing or invalid.
+                            if (!in_array($priority, ['low', 'medium', 'high'], true)) {
+                                $priority = ImageClassificationService::classifyImage($photoPath);
+                            }
+                        } catch (\Throwable $fileErr) {
+                            \Log::warning('Image classification failed: ' . $fileErr->getMessage());
+                            $priority = $priority ?? 'low';
+                        }
+
+                        try {
+                            IssueImage::create([
+                                'issue_id' => $issue->id,
+                                'photo_path' => $photoPath,
+                                'priority' => $priority,
+                                'analysis_notes' => "Auto-classified as {$priority} priority"
+                            ]);
+                        } catch (\Throwable $fileErr) {
+                            \Log::error('Error saving image record: ' . $fileErr->getMessage());
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            // Persist the issue priority based on the highest image priority after saving.
+            $issuePriority = $issue->getOverallPriority();
+            if ($issuePriority !== $issue->priority) {
+                $issue->update(['priority' => $issuePriority]);
+            }
+
+            return response()->json(['success' => true, 'issue_id' => $issue->id]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->errors();
+            $errorMessages = [];
+            foreach ($errors as $field => $messages) {
+                $errorMessages[] = implode(', ', $messages);
+            }
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation error: ' . implode(' | ', $errorMessages)
+            ], 422);
         } catch (\Exception $e) {
-            // 4. ERROR HANDLING: If something goes wrong (e.g. Database error), return the error message
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            \Log::error('Issue creation error: ' . $e->getMessage() . ' ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'error' => 'Server error: ' . $e->getMessage()
+            ], 500);
         }
     }
 
-    /**
-     * COMMENT: Logic for Admin to update the status (Pending -> Ongoing -> Resolved)
-     */
-    public function updateStatus(Request $request, $id) {
+    public function updateStatus(Request $request, $id)
+    {
         $issue = Issue::findOrFail($id);
         
         $currentStatus = $issue->status;
@@ -71,12 +107,37 @@ class IssueController extends Controller
         return back()->with('success', 'Status updated successfully!');
     }
 
-    /**
-     * COMMENT: Logic for Admin to permanently delete a report
-     */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $issue = Issue::findOrFail($id);
         $issue->delete();
         return back()->with('success', 'Report deleted successfully!');
+    }
+
+    public function updateImagePriority(Request $request, $imageId)
+    {
+        try {
+            $image = IssueImage::findOrFail($imageId);
+            $image->update([
+                'priority' => $request->input('priority', 'low'),
+                'analysis_notes' => 'Manually updated by admin'
+            ]);
+            
+            return response()->json(['success' => true, 'message' => 'Priority updated']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getIssueImages($issueId)
+    {
+        try {
+            $issue = Issue::findOrFail($issueId);
+            $images = $issue->images()->get(['id', 'photo_path', 'priority'])->toArray();
+            
+            return response()->json(['success' => true, 'images' => $images]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
     }
 }
