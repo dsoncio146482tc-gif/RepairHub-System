@@ -23,7 +23,6 @@
             <a href="{{ route('dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-amber-200 hover:bg-white/10" onclick="closeSideNav()">Home</a>
             <a href="{{ route('report_issue') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Report Issue</a>
             <a href="{{ route('my_report') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Reports</a>
-            <a href="{{ route('admin.dashboard') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Admin Dashboard</a>
             <a href="{{ route('login') }}" class="rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10" onclick="closeSideNav()">Log Out</a>
         </nav>
     </aside>
@@ -46,21 +45,25 @@
             <p class="mb-5 text-sm leading-6 md:text-base">A system for reporting and tracking campus facility issues.</p>
             <div class="flex flex-col gap-2.5 sm:flex-row">
               <a href="{{ route('report_issue') }}" class="rounded-md bg-yellow-300 px-4 py-2 text-sm font-semibold text-gray-900">Report an Issue</a>
-              <a href="{{ route('admin.dashboard') }}" class="rounded-md border border-white bg-white px-4 py-2 text-sm font-medium text-red-800">View Reports</a>
+              <a href="{{ route('my_report') }}" class="rounded-md border border-white bg-white px-4 py-2 text-sm font-medium text-red-800">View Reports</a>
             </div>
         </div>
         <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-<div class="text-3xl leading-none font-bold">{{ $issues->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Total Reports</div>
+                <div class="text-3xl leading-none font-bold">{{ $issues->count() }}</div>
+                <div class="mt-2 text-sm text-gray-500">Total Reports</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-<div class="text-3xl leading-none font-bold text-red-800">{{ $issues->where('status','Pending')->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Pending</div>
+                <div class="text-3xl leading-none font-bold text-red-800">{{ $issues->where('status','Pending')->count() }}</div>
+                <div class="mt-2 text-sm text-gray-500">Pending</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-<div class="text-3xl leading-none font-bold text-amber-500">{{ $issues->where('status','Ongoing')->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Ongoing</div>
+                <div class="text-3xl leading-none font-bold text-amber-500">{{ $issues->where('status','Ongoing')->count() }}</div>
+                <div class="mt-2 text-sm text-gray-500">Ongoing</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-<div class="text-3xl leading-none font-bold text-green-600">{{ $issues->where('status','Resolved')->count() }}</div>                <div class="mt-2 text-sm text-gray-500">Resolved</div>
+                <div class="text-3xl leading-none font-bold text-green-600">{{ $issues->where('status','Resolved')->count() }}</div>
+                <div class="mt-2 text-sm text-gray-500">Resolved</div>
             </div>
         </div>
         <div>
@@ -115,23 +118,12 @@
                 </table>
             </div>
         </div>
-        <div class="grid w-full gap-3 sm:grid-cols-2">
+        <div class="grid w-full gap-3 sm:grid-cols-1">
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
                 <a href="{{ route('report_issue') }}" class="flex w-full items-center gap-3 font-medium text-red-800">
                     <span class="min-w-0 flex-1">
                         <h4 class="text-sm font-semibold">Report an Issue</h4>
                         <p class="text-xs font-normal text-gray-500">Submit new report</p>
-                    </span>
-                    <svg class="h-5 w-5 shrink-0 text-red-800" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </a>
-            </div>
-            <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
-                <a href="{{ route('admin.dashboard') }}" class="flex w-full items-center gap-3 font-medium text-red-800">
-                    <span class="min-w-0 flex-1">
-                        <h4 class="text-sm font-semibold">Admin Dashboard</h4>
-                        <p class="text-xs font-normal text-gray-500">Manage reports</p>
                     </span>
                     <svg class="h-5 w-5 shrink-0 text-red-800" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
