@@ -74,17 +74,19 @@
             <div class="overflow-x-auto rounded-xl border border-gray-200">
                 <table class="min-w-full border-collapse table-fixed">
                     <colgroup>
-                        <col class="w-[18%]">
-                        <col class="w-[34%]">
+                        <col class="w-[16%]">
+                        <col class="w-[28%]">
+                        <col class="w-[13%]">
+                        <col class="w-[13%]">
                         <col class="w-[14%]">
-                        <col class="w-[14%]">
-                        <col class="w-[20%]">
+                        <col class="w-[16%]">
                     </colgroup>
                     <thead class="bg-gray-50">
                         <tr class="border-b border-gray-200 text-left align-middle">
                             <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Location</th>
                             <th class="px-4 py-3 text-base font-semibold text-gray-900 align-middle">Description</th>
                             <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Status</th>
+                            <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Priority</th>
                             <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Images</th>
                             <th class="px-4 py-3 text-base font-semibold text-gray-900 whitespace-nowrap align-middle">Date</th>
                         </tr>
@@ -100,6 +102,12 @@
             {{ $issue->status === 'Pending' ? 'text-red-800' : '' }}">
             {{ $issue->status }}
         </td>
+        <td class="px-4 py-3 text-base font-bold whitespace-nowrap align-middle
+            {{ $issue->priority === 'high' ? 'text-red-600' : '' }}
+            {{ $issue->priority === 'medium' ? 'text-yellow-600' : '' }}
+            {{ $issue->priority === 'low' ? 'text-green-600' : '' }}">
+            {{ ucfirst($issue->priority ?? '—') }}
+        </td>
         <td class="py-3 text-[15px] text-gray-700 whitespace-nowrap align-middle">
             @if($issue->images->count() > 0)
                 <button onclick="openImageModal({{ $issue->id }})" class="text-blue-600 hover:text-blue-800 font-medium">
@@ -112,7 +120,7 @@
         <td class="py-3 pr-4 text-[15px] text-gray-500 whitespace-nowrap align-middle">{{ $issue->created_at->format('F j, Y') }}</td>
     </tr>
     @empty
-    <tr class="h-32"><td colspan="5" class="py-10 text-center text-gray-400 align-middle">No issues reported yet.</td></tr>
+    <tr class="h-32"><td colspan="6" class="py-10 text-center text-gray-400 align-middle">No issues reported yet.</td></tr>
     @endforelse
 </tbody>
                 </table>

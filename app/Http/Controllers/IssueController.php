@@ -29,6 +29,7 @@ class IssueController extends Controller
                 'priority'    => 'low',
                 'id_number'   => $validated['id_number'],
                 'status'      => 'Pending',
+                'user_id'     => auth()->id(),
             ]);
 
             if ($request->hasFile('photo') && is_array($request->file('photo'))) {
@@ -39,7 +40,6 @@ class IssueController extends Controller
                         $priority = $photoPriorities[$index] ?? 'low';
 
                         try {
-                            // Only re-classify if the client-side priority is missing or invalid.
                             if (!in_array($priority, ['low', 'medium', 'high'], true)) {
                                 $priority = ImageClassificationService::classifyImage($photoPath);
                             }
@@ -63,7 +63,6 @@ class IssueController extends Controller
                 }
             }
 
-            // Persist the issue priority based on the highest image priority after saving.
             $issuePriority = $issue->getOverallPriority();
             if ($issuePriority !== $issue->priority) {
                 $issue->update(['priority' => $issuePriority]);
@@ -93,7 +92,7 @@ class IssueController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $issue = Issue::findOrFail($id);
-        
+
         $currentStatus = $issue->status;
         $newStatus = 'Pending';
 
@@ -122,7 +121,7 @@ class IssueController extends Controller
                 'priority' => $request->input('priority', 'low'),
                 'analysis_notes' => 'Manually updated by admin'
             ]);
-            
+
             return response()->json(['success' => true, 'message' => 'Priority updated']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
@@ -134,7 +133,7 @@ class IssueController extends Controller
         try {
             $issue = Issue::findOrFail($issueId);
             $images = $issue->images()->get(['id', 'photo_path', 'priority'])->toArray();
-            
+
             return response()->json(['success' => true, 'images' => $images]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
