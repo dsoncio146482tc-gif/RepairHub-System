@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IssueController;
 
@@ -62,9 +62,8 @@ Route::post('/logout', function (Illuminate\Http\Request $request) {
     $request->session()->regenerateToken();
     return redirect('/login');
 })->middleware('auth')->name('logout');
-=======
 
 Route::get('/', function () {
     return view('welcome');
 });
->>>>>>> 2b5decb5631c906c7f5cc1f38fecf5e4bb72bd23
+
